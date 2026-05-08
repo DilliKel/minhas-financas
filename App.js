@@ -1,20 +1,30 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+// App.js
+import React, { useState } from 'react';
+import { NavigationContainer } from '@react-navigation/native';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { TabRoutes } from './routes/TabRoutes';
+import { TransacoesProvider } from './context/TransacoesContext';
+import { BoasVindasScreen } from './screens/BoasVindasScreen';
 
 export default function App() {
+  // Mantém a navegação condicional da Aula 3 (tela de boas-vindas no primeiro acesso)
+  const [primeiroAcesso, setPrimeiroAcesso] = useState(true);
+
+  if (primeiroAcesso) {
+    return (
+      <SafeAreaProvider>
+        <BoasVindasScreen onConcluir={() => setPrimeiroAcesso(false)} />
+      </SafeAreaProvider>
+    );
+  }
+
   return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
+    <SafeAreaProvider>
+      <TransacoesProvider>
+        <NavigationContainer>
+          <TabRoutes />
+        </NavigationContainer>
+      </TransacoesProvider>
+    </SafeAreaProvider>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
