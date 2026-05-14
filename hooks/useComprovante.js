@@ -1,16 +1,33 @@
 // hooks/useComprovante.js
 import { useState } from 'react';
+import { Alert } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
+import * as FileSystem from 'expo-file-system';
+
+const DIR_COMPROVANTES = `${FileSystem.documentDirectory}comprovantes/`;
+
+async function persistirImagem(uri) {
+  await FileSystem.makeDirectoryAsync(DIR_COMPROVANTES, { intermediates: true });
+  const nome = uri.split('/').pop();
+  const destino = `${DIR_COMPROVANTES}${nome}`;
+  await FileSystem.copyAsync({ from: uri, to: destino });
+  return destino;
+}
 
 export function useComprovante() {
   const [obtendo, setObtendo] = useState(false);
 
-  // Opção 1 — abre a câmera do dispositivo
   async function tirarFoto() {
     setObtendo(true);
     try {
       const { status } = await ImagePicker.requestCameraPermissionsAsync();
-      if (status !== 'granted') return null;
+      if (status !== 'granted') {
+        Alert.alert(
+          'Permissão necessária',
+          'Permita o acesso à câmera nas configurações do dispositivo para tirar fotos.'
+        );
+        return null;
+      }
 
       const resultado = await ImagePicker.launchCameraAsync({
         quality: 0.5,
@@ -19,7 +36,7 @@ export function useComprovante() {
       });
 
       if (resultado.canceled) return null;
-      return resultado.assets[0].uri;
+      return await persistirImagem(resultado.assets[0].uri);
     } catch (erro) {
       console.error('Erro ao tirar foto:', erro);
       return null;
@@ -28,12 +45,17 @@ export function useComprovante() {
     }
   }
 
-  // Opção 2 — abre a galeria do dispositivo
   async function escolherDaGaleria() {
     setObtendo(true);
     try {
       const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-      if (status !== 'granted') return null;
+      if (status !== 'granted') {
+        Alert.alert(
+          'Permissão necessária',
+          'Permita o acesso à galeria nas configurações do dispositivo para selecionar fotos.'
+        );
+        return null;
+      }
 
       const resultado = await ImagePicker.launchImageLibraryAsync({
         quality: 0.5,
@@ -42,7 +64,7 @@ export function useComprovante() {
       });
 
       if (resultado.canceled) return null;
-      return resultado.assets[0].uri;
+      return await persistirImagem(resultado.assets[0].uri);
     } catch (erro) {
       console.error('Erro ao escolher imagem:', erro);
       return null;
