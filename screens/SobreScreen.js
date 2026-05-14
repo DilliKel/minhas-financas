@@ -2,19 +2,22 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import Constants from 'expo-constants';
 import { cores, espacamento } from '../theme';
+
+const versao = Constants.expoConfig?.version ?? '1.0.0';
 
 export function SobreScreen() {
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.container}>
         <Text style={styles.titulo}>Minhas Finanças</Text>
-        <Text style={styles.versao}>Versão 1.0.0</Text>
+        <Text style={styles.versao}>Versão {versao}</Text>
         <Text style={styles.descricao}>
           App de controle financeiro pessoal desenvolvido durante o Módulo 06
           do Curso de Capacitação em Desenvolvimento Full Stack — ITEAM.
         </Text>
-        <Text style={styles.tech}>React Native · Expo · AsyncStorage</Text>
+        <Text style={styles.tech}>React Native · Expo · SQLite</Text>
       </View>
     </SafeAreaView>
   );
