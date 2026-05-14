@@ -1,9 +1,9 @@
 // components/ItemTransacao.js
+import React, { memo } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { cores, espacamento, raio } from '../theme';
 
-// Mapeamento de categoria para ícone Ionicons
 const ICONES = {
   alimentacao: 'restaurant',
   transporte: 'car',
@@ -15,17 +15,22 @@ const ICONES = {
   outros: 'ellipsis-horizontal-circle',
 };
 
-export function ItemTransacao({ descricao, valor, categoria, tipo, data, onPress, onLongPress }) { // ← NOVO: prop onLongPress
+export const ItemTransacao = memo(function ItemTransacao({
+  descricao, valor, categoria, tipo, data, onPress, onLongPress,
+}) {
   const isReceita = tipo === 'receita';
   const nomeIcone = ICONES[categoria] ?? 'ellipsis-horizontal-circle';
+  const valorFormatado = `${isReceita ? '+' : '-'} R$ ${valor.toFixed(2)}`;
 
-  // Renderiza o item da lista: ícone da categoria, descrição/data e valor formatado
   return (
     <TouchableOpacity
       style={styles.container}
       onPress={onPress}
-      onLongPress={onLongPress}                                                                    // ← NOVO: dispara a exclusão (toque longo)
+      onLongPress={onLongPress}
       activeOpacity={0.7}
+      accessibilityLabel={`${descricao}, ${valorFormatado}, ${data}`}
+      accessibilityRole="button"
+      accessibilityHint="Toque para ver detalhes. Toque longo para excluir."
     >
       <View style={[
         styles.iconeContainer,
@@ -44,11 +49,11 @@ export function ItemTransacao({ descricao, valor, categoria, tipo, data, onPress
       </View>
 
       <Text style={[styles.valor, { color: isReceita ? cores.receita : cores.despesa }]}>
-        {isReceita ? '+' : '-'} R$ {valor.toFixed(2)}
+        {valorFormatado}
       </Text>
     </TouchableOpacity>
   );
-}
+});
 
 const styles = StyleSheet.create({
   container: {
@@ -58,38 +63,23 @@ const styles = StyleSheet.create({
     borderRadius: raio.md,
     padding: espacamento.md,
     marginBottom: espacamento.sm,
-    // Sombra (iOS):
+    marginHorizontal: espacamento.md,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.06,
     shadowRadius: 4,
-    // Sombra (Android):
     elevation: 2,
   },
   iconeContainer: {
     width: 44,
     height: 44,
-    borderRadius: 22,            // círculo perfeito (metade do width/height)
+    borderRadius: 22,
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: espacamento.md,
   },
-  info: {
-    flex: 1,                     // ocupa todo o espaço entre o ícone e o valor
-  },
-  descricao: {
-    fontSize: 15,
-    fontWeight: '600',
-    color: cores.texto,
-  },
-  data: {
-    fontSize: 12,
-    color: cores.subtexto,
-    marginTop: 2,
-  },
-  valor: {
-    fontSize: 15,
-    fontWeight: '700',
-    marginLeft: espacamento.sm,
-  },
+  info: { flex: 1 },
+  descricao: { fontSize: 15, fontWeight: '600', color: cores.texto },
+  data: { fontSize: 12, color: cores.subtexto, marginTop: 2 },
+  valor: { fontSize: 15, fontWeight: '700', marginLeft: espacamento.sm },
 });

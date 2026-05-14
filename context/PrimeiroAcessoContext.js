@@ -11,14 +11,18 @@ export function PrimeiroAcessoProvider({ children }) {
   const [carregando, setCarregando] = useState(true);
 
   useEffect(() => {
-    AsyncStorage.getItem(CHAVE).then(valor => {
-      if (valor === 'true') setPrimeiroAcesso(false);
-      setCarregando(false);
-    });
+    AsyncStorage.getItem(CHAVE)
+      .then(valor => { if (valor === 'true') setPrimeiroAcesso(false); })
+      .catch(e => console.error('Erro ao ler primeiro acesso:', e))
+      .finally(() => setCarregando(false));
   }, []);
 
   async function concluir() {
-    await AsyncStorage.setItem(CHAVE, 'true');
+    try {
+      await AsyncStorage.setItem(CHAVE, 'true');
+    } catch (e) {
+      console.error('Erro ao salvar primeiro acesso:', e);
+    }
     setPrimeiroAcesso(false);
   }
 

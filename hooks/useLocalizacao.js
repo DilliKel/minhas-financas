@@ -1,5 +1,6 @@
 // hooks/useLocalizacao.js
 import { useState } from 'react';
+import { Alert } from 'react-native';
 import * as Location from 'expo-location';
 
 export function useLocalizacao() {
@@ -8,13 +9,15 @@ export function useLocalizacao() {
   async function obterLocalizacao() {
     setObtendo(true);
     try {
-      // 1. Solicita permissão ao usuário
       const { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== 'granted') {
-        return null; // usuário negou
+        Alert.alert(
+          'Permissão necessária',
+          'Permita o acesso à localização nas configurações do dispositivo para usar esta função.'
+        );
+        return null;
       }
 
-      // 2. Obtém as coordenadas atuais
       const posicao = await Location.getCurrentPositionAsync({
         accuracy: Location.Accuracy.Balanced,
       });
@@ -25,6 +28,7 @@ export function useLocalizacao() {
       };
     } catch (erro) {
       console.error('Erro ao obter localização:', erro);
+      Alert.alert('Erro', 'Não foi possível obter a localização. Tente novamente.');
       return null;
     } finally {
       setObtendo(false);

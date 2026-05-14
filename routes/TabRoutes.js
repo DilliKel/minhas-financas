@@ -7,6 +7,7 @@ import { NovaTransacaoScreen }  from '../screens/NovaTransacaoScreen';
 import { RelatorioScreen }      from '../screens/RelatorioScreen';
 import { MapaScreen }           from '../screens/MapaScreen';
 import { SobreScreen }          from '../screens/SobreScreen';
+import { cores } from '../theme';
 
 const Tab = createBottomTabNavigator();
 
@@ -23,10 +24,10 @@ export function TabRoutes() {
     <Tab.Navigator
       screenOptions={({ route }) => ({
         headerShown: false,
-        tabBarActiveTintColor:   '#2c3e50',
-        tabBarInactiveTintColor: '#95a5a6',
+        tabBarActiveTintColor:   cores.primaria,
+        tabBarInactiveTintColor: cores.subtexto,
         tabBarStyle: {
-          backgroundColor: '#fff',
+          backgroundColor: cores.cartao,
           borderTopColor:  '#eee',
           height:          60,
           paddingBottom:   8,

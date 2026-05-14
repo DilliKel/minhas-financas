@@ -9,11 +9,11 @@ import {
   PrimeiroAcessoProvider,
   usePrimeiroAcesso,
 } from './context/PrimeiroAcessoContext';
+import { ErrorBoundary } from './components/ErrorBoundary';
 
 function ConteudoApp() {
   const { primeiroAcesso, carregando, concluir } = usePrimeiroAcesso();
 
-  // Enquanto lê o AsyncStorage, evita o flash da tela de boas-vindas
   if (carregando) return null;
 
   if (primeiroAcesso) {
@@ -31,10 +31,12 @@ function ConteudoApp() {
 
 export default function App() {
   return (
-    <SafeAreaProvider>
-      <PrimeiroAcessoProvider>
-        <ConteudoApp />
-      </PrimeiroAcessoProvider>
-    </SafeAreaProvider>
+    <ErrorBoundary>
+      <SafeAreaProvider>
+        <PrimeiroAcessoProvider>
+          <ConteudoApp />
+        </PrimeiroAcessoProvider>
+      </SafeAreaProvider>
+    </ErrorBoundary>
   );
 }
